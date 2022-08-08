@@ -46,10 +46,10 @@
                           <div class="columns is-1">
                             <div class="column">
                             <div v-if="noDeadline">
-                              <Datepicker @selected="noDeadline = false" v-model="state.dateDeadline" name="deadline"></Datepicker>
+                              <Datepicker :disabled-dates="state.disabledDates" @selected="noDeadline = false" v-model="state.dateDeadline" name="deadline"></Datepicker>
                             </div>
                             <div v-else>
-                              <Datepicker v-model="state.date" name="deadline"></Datepicker>
+                              <Datepicker :disabled-dates="state.disabledDates" v-model="state.date" name="deadline"></Datepicker>
 
                             </div>
                             </div>
@@ -190,10 +190,10 @@
                               <div class="columns is-1">
                                 <div class="column">
                                 <div v-if="noDeadline">
-                                  <Datepicker @selected="noDeadline = false" v-model="state.dateDeadline" name="deadline"></Datepicker>
+                                  <Datepicker :disabled-dates="state.disabledDates" @selected="noDeadline = false" v-model="state.dateDeadline" name="deadline"></Datepicker>
                                 </div>
                                 <div v-else>
-                                  <Datepicker v-model="state.dateEdit" name="deadline"></Datepicker>
+                                  <Datepicker :disabled-dates="state.disabledDates" v-model="state.dateEdit" name="deadline"></Datepicker>
 
                                 </div>
                                 </div>
@@ -291,8 +291,12 @@ export default {
       state: {
         date: new Date(2022,8,8),
         dateDeadline: null,
-        dateEdit: new Date(2022,8,7)
-        
+        dateEdit: new Date(2022,8,7),
+        disabledDates: {
+          
+          to: new Date(),
+          preventDisableDateSelection: true
+        }
       }
     }
   },
