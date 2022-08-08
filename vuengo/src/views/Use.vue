@@ -17,7 +17,7 @@
               <div class="modal-card">
                 <header class="modal-card-head">
                   <p class="modal-card-title">Add Task</p>
-                  <button type="button" class="delete" aria-label="close" @click="isActiveTask = !isActiveTask"></button>
+                  <button type="button" class="delete" aria-label="close" @click="isActiveTask = !isActiveTask, noDeadline = false"></button>
                 </header>
                 
                 <section class="modal-card-body">
@@ -136,7 +136,7 @@
                           editTas = task, 
                           this.descriptionEdit = task.description,
                           this.statusEdit = task.status,
-                          state.date = task.date ? new Date(formatDate(task.date, 2)) : null,
+                          state.dateEdit = task.date ? new Date(formatDate(task.date, 2)) : null,
                           this.grpwahlEdit = task.group,
                           this.noDeadline = task.date ? false : true
                           " 
@@ -162,7 +162,7 @@
                         <div class="modal-card">
                           <header class="modal-card-head">
                             <p class="modal-card-title">Edit Task: " {{ editTas.description }} "</p>
-                            <button type="button" class="delete" aria-label="close" @click="isActiveEdit = !isActiveEdit"></button>
+                            <button type="button" class="delete" aria-label="close" @click="isActiveEdit = !isActiveEdit, noDeadline = false"></button>
                           </header>
                           <section class="modal-card-body">
                             <div class="field">
@@ -193,7 +193,7 @@
                                   <Datepicker @selected="noDeadline = false" v-model="state.dateDeadline" name="deadline"></Datepicker>
                                 </div>
                                 <div v-else>
-                                  <Datepicker v-model="state.date" name="deadline"></Datepicker>
+                                  <Datepicker v-model="state.dateEdit" name="deadline"></Datepicker>
 
                                 </div>
                                 </div>
@@ -290,7 +290,8 @@ export default {
       test: '',
       state: {
         date: new Date(2022,8,8),
-        dateDeadline: null 
+        dateDeadline: null,
+        dateEdit: new Date(2022,8,7)
         
       }
     }
@@ -348,7 +349,7 @@ export default {
     async editTask(task) {
       /* Task param is the task obj */
 
-      const date = this.state.date
+      const date = this.state.dateEdit
       var mm = date.getMonth() + 1
       var dd = date.getDate()
       var yyyy = date.getFullYear()
@@ -364,9 +365,9 @@ export default {
       const newdata = {
         description: this.descriptionEdit,
         status: this.statusEdit,
-        group: task.group,
+        group: this.grpwahlEdit,
         date: dateFormat
-        //DATUM / DEADLINE
+       
       }
 
       console.log(this.test)
@@ -375,6 +376,14 @@ export default {
         .put('/api/v1/tasks/' + task.id + "/", newdata)
         .then(response => {
           console.log(response)
+          this.isActiveEdit = false
+
+          //TODO TASK IM ARRAY ÜBERARBEITEN
+           this.tasks.filter(tasK => task.id === task.id)
+           task.description = this.descriptionEdit
+           task.status = this.statusEdit
+           task.group = this.grpwahlEdit
+           task.date = dateFormat 
         }).catch(error => {
           console.log(error)
         })
@@ -433,17 +442,19 @@ export default {
     async addTask() {
       if(this.description) {
         
-
-        const date = this.state.date
-        var mm = date.getMonth() + 1
-        var dd = date.getDate()
-        var yyyy = date.getFullYear()
-
-        let dateFormat = yyyy + "-" + (mm>9 ? '' : '0' ) + mm + "-" + (dd > 9 ? '' : '0')+ dd
+        let dateFormat
+        
         
         if(this.noDeadline) {
           console.log("No Deadline")
           dateFormat = null
+        }else{
+          const date = this.state.date
+          var mm = date.getMonth() + 1
+          var dd = date.getDate()
+          var yyyy = date.getFullYear()
+
+          dateFormat = yyyy + "-" + (mm>9 ? '' : '0' ) + mm + "-" + (dd > 9 ? '' : '0')+ dd
         }
 
         const data = {
