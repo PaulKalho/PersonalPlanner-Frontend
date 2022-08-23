@@ -231,17 +231,26 @@
                       <table class="table is-striped is-hoverable is-fullwidth">
                         <thead>
                           <th style="width: 5%">Delete</th>
-                          <th class="has-text-left"><h1 class="title is-5">Keine Gruppe:</h1></th>
+                          <th style="width: 75%" class="has-text-left"><h1 class="title is-5">Keine Gruppe:</h1></th>
                           <th>Edit</th>
-                          <th @click="sort('date')" style="width: 15%">Bis</th>
-                          
-                          <th class="has-text-right"><button class="delete is-small is-danger " @click="deleteGroup(group.id)"></button> </th>
+                          <th style="width: 15%" @click="sort('date')" >Bis</th>    
+                          <th style="width: 5%" class="has-text-right"><button class="delete is-small is-danger " @click="deleteGroup(group.id)"></button> </th>
 
                         </thead>
                         <br>
                         <tbody class="table is-striped is-hoverable" v-for="task in tasks" v-bind:key="task.id">
                           <td style="width: 5%" v-if="task.status === 'todo' && task.group === null"><button @click="deleteTask(task.id)" class="delete is-small" ></button></td>
                           <td class="has-text-left" v-if="task.status === 'todo' && task.group === null">{{task.description + ", " + getGroupName(task.group)}}</td>
+                          <td v-if="task.status === 'todo' && task.group === null"><font-awesome-icon @click="
+                          isActiveEdit = !isActiveEdit, 
+                          editTas = task, 
+                          this.descriptionEdit = task.description,
+                          this.statusEdit = task.status,
+                          state.dateEdit = task.date ? new Date(formatDate(task.date, 2)) : null,
+                          this.grpwahlEdit = task.group,
+                          this.noDeadline = task.date ? false : true
+                          " 
+                          icon="fa-regular fa-pen-to-square" /> </td>
                           <td style="width: 15%" v-if="task.status === 'todo' && task.group === null">{{formatDate(task.date)}}</td>
                           <td class="has-text-right" v-if="task.status === 'todo' && task.group === null">
                             <!-- <a @click="setStatus(task.id, 'done')">Done</a> -->
